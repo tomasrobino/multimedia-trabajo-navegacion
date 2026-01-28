@@ -1,6 +1,7 @@
 package com.example.multimediatrabajonavegacion
 
 import android.content.Context
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -21,6 +22,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.google.firebase.crashlytics.buildtools.reloc.com.google.common.reflect.TypeToken
 import com.google.gson.Gson
@@ -28,16 +30,43 @@ import com.google.gson.Gson
 data class Puro(
     val name: String,
     val id: String,
-    val precio: Double
+    val price: Double,
+    val icon: Int
 )
 
+data class RawPuro(
+    val id: String,
+    val name: String,
+    val price: Double
+)
+
+fun iconForPuro(id: String): Int =
+    when (id) {
+        "camel" -> R.drawable.camel
+        "marlboro" -> R.drawable.marlboro
+        "newport" -> R.drawable.newport
+        "american-spirit" -> R.drawable.american_spirit
+        "pall-mall" -> R.drawable.pall_mall
+        "memphis" -> R.drawable.memphis
+        else -> R.drawable.ic_launcher_foreground
+    }
+
 fun loadPurosFromAssets(context: Context): List<Puro> {
-    val jsonString = context.assets.open("data.json")
+    val json = context.assets.open("data.json")
         .bufferedReader()
         .use { it.readText() }
 
-    val listType = object : TypeToken<List<Puro>>() {}.type
-    return Gson().fromJson(jsonString, listType)
+    val type = object : TypeToken<List<RawPuro>>() {}.type
+    val raw = Gson().fromJson<List<RawPuro>>(json, type)
+
+    return raw.map {
+        Puro(
+            id = it.id,
+            name = it.name,
+            price = it.price,
+            icon = iconForPuro(it.id)
+        )
+    }
 }
 
 @Composable
@@ -65,7 +94,7 @@ fun Home(modifier: Modifier) {
             }
         }
         Button(onClick = {
-            purosFiltrados = purosFiltrados.sortedByDescending { puro -> puro.precio }
+            purosFiltrados = purosFiltrados.sortedByDescending { puro -> puro.price }
         }) {
             Text(text = "Ordenar menor a mayor")
         }
