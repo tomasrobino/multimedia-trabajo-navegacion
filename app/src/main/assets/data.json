@@ -1,0 +1,8 @@
+[
+  {"id": "camel", "name":  "Camel", "price":  10.0},
+  {"id": "marlboro", "name":  "Marlboro", "price":  9.0},
+  {"id": "newport", "name":  "Newport", "price":  6.0},
+  {"id": "american-spirit", "name":  "American Spirit", "price":  15.0},
+  {"id": "pall-mall", "name":  "Pall Mall", "price":  3.0},
+  {"id": "memphis", "name":  "Memphis", "price":  2.5}
+]
