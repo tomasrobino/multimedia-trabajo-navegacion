@@ -54,6 +54,8 @@ dependencies {
     implementation(libs.androidx.navigation3.ui)
     implementation(libs.firebase.crashlytics.buildtools)
     implementation("com.google.code.gson:gson:2.10.1")
+    implementation(libs.androidx.navigation.runtime.ktx)
+    implementation(libs.androidx.navigation.compose)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

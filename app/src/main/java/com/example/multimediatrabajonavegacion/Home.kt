@@ -1,7 +1,6 @@
 package com.example.multimediatrabajonavegacion
 
 import android.content.Context
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -22,8 +21,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import com.google.firebase.crashlytics.buildtools.reloc.com.google.common.reflect.TypeToken
 import com.google.gson.Gson
 
@@ -70,9 +69,8 @@ fun loadPurosFromAssets(context: Context): List<Puro> {
 }
 
 @Composable
-fun Home(modifier: Modifier) {
+fun Home(navHostController: NavHostController, sharedViewModel: SharedViewModel, modifier: Modifier = Modifier) {
     val context = LocalContext.current
-    var filtro by remember { mutableStateOf<(Puro) -> Boolean>({true} ) }
     var tiposPuros by remember { mutableStateOf(listOf<Puro>()) }
     var purosFiltrados by remember { mutableStateOf(tiposPuros) }
     var selectedId by remember { mutableStateOf<String?>(null) }
@@ -82,15 +80,15 @@ fun Home(modifier: Modifier) {
         purosFiltrados = tiposPuros
     }
 
-    //var purosFiltrados = tiposPuros.filter { p -> filtro(p) }
-
-
     Column() {
         LazyColumn(
             modifier = Modifier.systemBarsPadding()
         ) {
             items(items = purosFiltrados, key = { it.id }) {
-                    puro -> PuroRow(puro, selected = puro.id == selectedId, onClick = {selectedId = puro.id})
+                    puro -> PuroRow(puro, selected = puro.id == selectedId, onClick = {
+                        selectedId = puro.id
+                        sharedViewModel.selectedPuro = puro
+                    })
             }
         }
         Button(onClick = {
@@ -105,7 +103,11 @@ fun Home(modifier: Modifier) {
                 "Sin seleccion"
             }
         )
-        Button(onClick = {}) {
+        Button(onClick = {
+            if (sharedViewModel.selectedPuro != null) {
+                navHostController.navigate("details")
+            }
+        }) {
             Text("Confirm")
         }
     }
