@@ -69,7 +69,7 @@ fun loadPurosFromAssets(context: Context): List<Puro> {
 }
 
 @Composable
-fun Home(navHostController: NavHostController, sharedViewModel: SharedViewModel, modifier: Modifier = Modifier) {
+fun Home(navHostController: NavHostController, sharedViewModel: SharedViewModel) {
     val context = LocalContext.current
     var tiposPuros by remember { mutableStateOf(listOf<Puro>()) }
     var purosFiltrados by remember { mutableStateOf(tiposPuros) }
