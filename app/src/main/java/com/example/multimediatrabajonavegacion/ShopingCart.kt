@@ -1,5 +1,6 @@
 package com.example.multimediatrabajonavegacion
 
+import android.R.attr.onClick
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -86,7 +87,7 @@ fun CartScreen(onNavigateToHome: () -> Unit) {
             // Botón para volver al Home (Requisito de la actividad)
             Button(
                 // onNavigateToHome() dentro de onClick para volver a la pantalla de inicio
-                onClick = { },
+                onClick = { onNavigateToHome() },
                 modifier = Modifier.fillMaxWidth(),
                 shape = MaterialTheme.shapes.medium
             ) {

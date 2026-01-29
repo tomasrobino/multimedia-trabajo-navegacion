@@ -90,7 +90,6 @@ fun WelcomeScreen(
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun WelcomePreview() {
-    // Es importante envolverlo en el tema para que se vean los colores de Material 3
     MaterialTheme {
         WelcomeScreen(
             onNavigateToHome = { },
