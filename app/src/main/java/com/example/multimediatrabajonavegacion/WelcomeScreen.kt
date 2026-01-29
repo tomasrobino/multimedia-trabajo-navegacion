@@ -11,7 +11,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun WelcomeScreen() {
+fun WelcomeScreen(
+    onNavigateToHome: () -> Unit,      // Acción si es mayor de edad
+    onNavigateToLegal: () -> Unit      // Acción si es menor de edad
+)
+{
+
     // Estado para capturar la edad
     var edadInput by remember { mutableStateOf("") }
 
@@ -63,9 +68,15 @@ fun WelcomeScreen() {
             // Botón versión Material 3
             Button(
                 onClick = {
-                    // Aquí irá la lógica de:
-                    // val edad = edadInput.toIntOrNull() ?: 0
-                    // if (edad >= 18) navController.navigate("home") ...
+                    // 1. Convertimos el texto a número (si está vacío o no es número, será 0)
+                    val edad = edadInput.toIntOrNull() ?: 0
+
+                    // 2. Ejecutamos la navegación según la edad
+                    if (edad >= 18) {
+                        onNavigateToHome()
+                    } else {
+                        onNavigateToLegal()
+                    }
                 },
                 modifier = Modifier.fillMaxWidth()
             ) {
@@ -81,6 +92,9 @@ fun WelcomeScreen() {
 fun WelcomePreview() {
     // Es importante envolverlo en el tema para que se vean los colores de Material 3
     MaterialTheme {
-        WelcomeScreen()
+        WelcomeScreen(
+            onNavigateToHome = { },
+            onNavigateToLegal = { }
+        )
     }
 }
