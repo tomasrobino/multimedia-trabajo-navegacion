@@ -12,10 +12,14 @@ fun NavigationComponent() {
     val navController = rememberNavController()
     NavHost(
         navController = navController,
-        startDestination = "home"
+        startDestination = "welcome"
     ) {
         composable("home") { Home(navController, sharedViewModel) }
         composable("details") { Details(navController, sharedViewModel) }
         composable("welcome") { WelcomeScreen(navController) }
+        composable("legal") { LegalInfoScreen {
+            navController.popBackStack()
+        }
+        }
     }
 }

@@ -67,7 +67,10 @@ fun WelcomeScreen(navHostController: NavHostController) {
 
                     // Ejecutamos la navegación según la edad
                     if (edad >= 18) {
-                        navHostController.navigate("home")
+                        navHostController.navigate("home") {
+                            popUpTo("welcome")
+                        }
+
                     } else {
                         navHostController.navigate("legal")
                     }

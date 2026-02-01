@@ -45,7 +45,6 @@ fun LegalInfoScreen(onBack: () -> Unit) {
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Texto legal basado en el enunciado
             Text(
                 text = "Según la Ley 28/2005, queda prohibida la venta y suministro de productos de tabaco a menores de 18 años.",
                 style = MaterialTheme.typography.bodyLarge,
