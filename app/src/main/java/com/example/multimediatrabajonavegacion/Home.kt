@@ -1,35 +1,27 @@
 package com.example.multimediatrabajonavegacion
 
 import android.content.Context
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.google.firebase.crashlytics.buildtools.reloc.com.google.common.reflect.TypeToken
 import com.google.gson.Gson
 
+/* -------------------- DATA -------------------- */
+
 data class Puro(
-    val name: String,
     val id: String,
+    val name: String,
     val price: Double,
     val icon: Int
 )
@@ -40,16 +32,17 @@ data class RawPuro(
     val price: Double
 )
 
-fun iconForPuro(id: String): Int =
-    when (id) {
-        "camel" -> R.drawable.camel
-        "marlboro" -> R.drawable.marlboro
-        "newport" -> R.drawable.newport
-        "american-spirit" -> R.drawable.american_spirit
-        "pall-mall" -> R.drawable.pall_mall
-        "memphis" -> R.drawable.memphis
-        else -> R.drawable.ic_launcher_foreground
-    }
+/* -------------------- HELPERS -------------------- */
+
+fun iconForPuro(id: String): Int = when (id) {
+    "camel" -> R.drawable.camel
+    "marlboro" -> R.drawable.marlboro
+    "newport" -> R.drawable.newport
+    "american-spirit" -> R.drawable.american_spirit
+    "pall-mall" -> R.drawable.pall_mall
+    "memphis" -> R.drawable.memphis
+    else -> R.drawable.ic_launcher_foreground
+}
 
 fun loadPurosFromAssets(context: Context): List<Puro> {
     val json = context.assets.open("data.json")
@@ -69,64 +62,133 @@ fun loadPurosFromAssets(context: Context): List<Puro> {
     }
 }
 
+/* -------------------- SCREEN -------------------- */
+
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Home(navHostController: NavHostController, sharedViewModel: SharedViewModel, modifier: Modifier = Modifier) {
+fun Home(
+    navHostController: NavHostController,
+    sharedViewModel: SharedViewModel
+) {
     val context = LocalContext.current
-    var tiposPuros by remember { mutableStateOf(listOf<Puro>()) }
-    var purosFiltrados by remember { mutableStateOf(tiposPuros) }
+
+    var allPuros by remember { mutableStateOf(emptyList<Puro>()) }
     var selectedId by remember { mutableStateOf<String?>(null) }
+    var searchQuery by remember { mutableStateOf("") }
+    var maxPrice by remember { mutableStateOf<Double?>(null) }
+
+    val filteredPuros by remember(allPuros, searchQuery, maxPrice) {
+        derivedStateOf {
+            allPuros.filter { puro ->
+                puro.name.contains(searchQuery, ignoreCase = true) &&
+                        (maxPrice?.let { puro.price <= it } ?: true)
+            }
+        }
+    }
 
     LaunchedEffect(Unit) {
-        tiposPuros = loadPurosFromAssets(context)
-        purosFiltrados = tiposPuros
+        allPuros = loadPurosFromAssets(context)
     }
 
-    Column() {
-        LazyColumn(
-            modifier = Modifier.systemBarsPadding()
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("Selecciona tu puro") }
+            )
+        }
+    ) { padding ->
+
+        Column(
+            modifier = Modifier
+                .padding(padding)
+                .fillMaxSize()
         ) {
-            items(items = purosFiltrados, key = { it.id }) {
-                    puro -> PuroRow(puro, selected = puro.id == selectedId, onClick = {
-                        selectedId = puro.id
-                        sharedViewModel.selectedPuro = puro
-                    })
+
+            /* -------- Filters -------- */
+
+            Column(
+                modifier = Modifier.padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                OutlinedTextField(
+                    value = searchQuery,
+                    onValueChange = { searchQuery = it },
+                    label = { Text("Buscar por nombre") },
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                OutlinedTextField(
+                    value = maxPrice?.toString() ?: "",
+                    onValueChange = { maxPrice = it.toDoubleOrNull() },
+                    label = { Text("Precio máximo") },
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth()
+                )
             }
-        }
-        Button(onClick = {
-            purosFiltrados = purosFiltrados.sortedByDescending { puro -> puro.price }
-        }) {
-            Text(text = "Ordenar menor a mayor")
-        }
-        Text(
-            text = if (selectedId != null) {
-                "El seleccionado es: ${tiposPuros.filter { puro -> puro.id == selectedId }[0].name}"
-            } else {
-                "Sin seleccion"
+
+            /* -------- List -------- */
+
+            LazyColumn(
+                modifier = Modifier.weight(1f)
+            ) {
+                items(filteredPuros, key = { it.id }) { puro ->
+                    PuroRow(
+                        puro = puro,
+                        selected = puro.id == selectedId,
+                        onClick = {
+                            selectedId = puro.id
+                            sharedViewModel.selectedPuro = puro
+                        }
+                    )
+                }
             }
-        )
-        Button(onClick = {
-            if (sharedViewModel.selectedPuro != null) {
-                navHostController.navigate("details")
+
+            /* -------- Footer -------- */
+
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+
+                Text(
+                    text = selectedId?.let {
+                        "Seleccionado: ${allPuros.first { p -> p.id == it }.name}"
+                    } ?: "Sin selección",
+                    style = MaterialTheme.typography.bodyMedium
+                )
+
+                Button(
+                    onClick = { navHostController.navigate("details") },
+                    enabled = sharedViewModel.selectedPuro != null,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("Confirmar")
+                }
+
+                OutlinedButton(
+                    onClick = { navHostController.popBackStack() },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("Volver a Bienvenida")
+                }
             }
-        }) {
-            Text("Confirm")
-        }
-        // Botón de vuelta atrás
-        Button(
-            onClick = { navHostController.popBackStack() },
-            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary)
-        ) {
-            Text("Volver a Bienvenida")
         }
     }
-
 }
 
+/* -------------------- ROW -------------------- */
+
 @Composable
-fun PuroRow(puro: Puro, selected: Boolean, onClick: () -> Unit) {
+fun PuroRow(
+    puro: Puro,
+    selected: Boolean,
+    onClick: () -> Unit
+) {
     Card(
         modifier = Modifier
-            .padding(horizontal = 16.dp, vertical = 8.dp)
+            .padding(horizontal = 16.dp, vertical = 6.dp)
             .fillMaxWidth()
             .clickable(onClick = onClick),
         colors = CardDefaults.cardColors(
@@ -134,13 +196,33 @@ fun PuroRow(puro: Puro, selected: Boolean, onClick: () -> Unit) {
                 MaterialTheme.colorScheme.primaryContainer
             else
                 MaterialTheme.colorScheme.surface
-        )
+        ),
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
-        Text(
-            text = puro.name,
+        Row(
             modifier = Modifier.padding(16.dp),
-            style = MaterialTheme.typography.bodyLarge
-        )
-    }
+            verticalAlignment = Alignment.CenterVertically
+        ) {
 
+            Image(
+                painter = painterResource(puro.icon),
+                contentDescription = puro.name,
+                modifier = Modifier.size(48.dp)
+            )
+
+            Spacer(modifier = Modifier.width(16.dp))
+
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = puro.name,
+                    style = MaterialTheme.typography.titleMedium
+                )
+                Text(
+                    text = "€${puro.price}",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.primary
+                )
+            }
+        }
+    }
 }
