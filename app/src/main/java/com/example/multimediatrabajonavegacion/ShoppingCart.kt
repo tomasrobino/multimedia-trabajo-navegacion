@@ -1,5 +1,6 @@
 package com.example.multimediatrabajonavegacion
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -18,6 +19,10 @@ import androidx.compose.ui.unit.sp
 fun CartScreen(sharedViewModel: SharedViewModel, onNavigateToHome: () -> Unit) {
     val total = sharedViewModel.carrito.sumOf {
         it.puro.price * it.number
+    }
+
+    BackHandler {
+        onNavigateToHome()
     }
 
     Scaffold(
