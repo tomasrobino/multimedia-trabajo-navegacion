@@ -17,7 +17,6 @@ import androidx.navigation.NavHostController
 import com.google.firebase.crashlytics.buildtools.reloc.com.google.common.reflect.TypeToken
 import com.google.gson.Gson
 
-/* -------------------- DATA -------------------- */
 
 data class Puro(
     val id: String,
@@ -32,7 +31,6 @@ data class RawPuro(
     val price: Double
 )
 
-/* -------------------- HELPERS -------------------- */
 
 fun iconForPuro(id: String): Int = when (id) {
     "camel" -> R.drawable.camel
@@ -62,7 +60,6 @@ fun loadPurosFromAssets(context: Context): List<Puro> {
     }
 }
 
-/* -------------------- SCREEN -------------------- */
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -104,7 +101,6 @@ fun Home(
                 .fillMaxSize()
         ) {
 
-            /* -------- Filters -------- */
 
             Column(
                 modifier = Modifier.padding(16.dp),
@@ -126,7 +122,6 @@ fun Home(
                 )
             }
 
-            /* -------- List -------- */
 
             LazyColumn(
                 modifier = Modifier.weight(1f)
@@ -143,7 +138,6 @@ fun Home(
                 }
             }
 
-            /* -------- Footer -------- */
 
             Column(
                 modifier = Modifier
@@ -178,7 +172,6 @@ fun Home(
     }
 }
 
-/* -------------------- ROW -------------------- */
 
 @Composable
 fun PuroRow(
