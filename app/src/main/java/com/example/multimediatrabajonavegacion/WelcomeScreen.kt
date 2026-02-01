@@ -9,18 +9,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 
 @Composable
-fun WelcomeScreen(
-    onNavigateToHome: () -> Unit,      // Acción si es mayor de edad
-    onNavigateToLegal: () -> Unit      // Acción si es menor de edad
-)
-{
+fun WelcomeScreen(navHostController: NavHostController) {
 
     // Estado para capturar la edad
     var edadInput by remember { mutableStateOf("") }
 
-    // Surface es el contenedor principal en Material 3
     Surface(
         modifier = Modifier.fillMaxSize(),
         color = MaterialTheme.colorScheme.background
@@ -32,7 +29,6 @@ fun WelcomeScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            // Título con estilo Material 3
             Text(
                 text = "Estanco Virtual",
                 style = MaterialTheme.typography.headlineLarge,
@@ -48,7 +44,6 @@ fun WelcomeScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Campo de texto versión Material 3
             OutlinedTextField(
                 value = edadInput,
                 onValueChange = { newValue ->
@@ -65,17 +60,16 @@ fun WelcomeScreen(
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            // Botón versión Material 3
             Button(
                 onClick = {
-                    // 1. Convertimos el texto a número (si está vacío o no es número, será 0)
+                    // Convertimos el texto a número (si está vacío o no es número, será 0)
                     val edad = edadInput.toIntOrNull() ?: 0
 
-                    // 2. Ejecutamos la navegación según la edad
+                    // Ejecutamos la navegación según la edad
                     if (edad >= 18) {
-                        onNavigateToHome()
+                        navHostController.navigate("home")
                     } else {
-                        onNavigateToLegal()
+                        navHostController.navigate("legal")
                     }
                 },
                 modifier = Modifier.fillMaxWidth()
@@ -86,14 +80,11 @@ fun WelcomeScreen(
     }
 }
 
-// Función para previsualizar la pantalla en el panel lateral
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun WelcomePreview() {
+    val navController = rememberNavController()
     MaterialTheme {
-        WelcomeScreen(
-            onNavigateToHome = { },
-            onNavigateToLegal = { }
-        )
+        WelcomeScreen(navController)
     }
 }

@@ -16,5 +16,6 @@ fun NavigationComponent() {
     ) {
         composable("home") { Home(navController, sharedViewModel) }
         composable("details") { Details(navController, sharedViewModel) }
+        composable("welcome") { WelcomeScreen(navController) }
     }
 }
