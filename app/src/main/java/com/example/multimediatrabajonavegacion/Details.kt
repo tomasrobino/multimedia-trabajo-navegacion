@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -24,6 +25,11 @@ fun Details(
     sharedViewModel: SharedViewModel
 ) {
     val puro = sharedViewModel.selectedPuro!!
+
+    // Initializes cantidad to 1 each time Details is launched, to avoid problems
+    LaunchedEffect(puro.id) {
+        sharedViewModel.cantidad = 1
+    }
 
     Column(
         modifier = Modifier
