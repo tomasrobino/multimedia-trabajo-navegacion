@@ -20,6 +20,8 @@ fun NavigationComponent() {
         composable("legal") { LegalInfoScreen {
             navController.popBackStack()
         } }
-        composable("cart") { CartScreen {  } }
+        composable("cart") { CartScreen(sharedViewModel) {
+            navController.popBackStack(route = "home", inclusive = false)
+        } }
     }
 }

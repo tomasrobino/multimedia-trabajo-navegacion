@@ -15,13 +15,10 @@ import androidx.compose.ui.unit.sp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CartScreen(onNavigateToHome: () -> Unit) {
-    // Datos de ejemplo (Esto luego vendrá de un ViewModel o parámetros)
-    val purosEnCarrito = listOf(
-        "Puro Habano" to 45.0,
-        "Puro Amazonico" to 30.0
-    )
-    val total = purosEnCarrito.sumOf { it.second }
+fun CartScreen(sharedViewModel: SharedViewModel, onNavigateToHome: () -> Unit) {
+    val total = sharedViewModel.carrito.sumOf {
+        it.puro.price * it.number
+    }
 
     Scaffold(
         topBar = {
@@ -47,9 +44,11 @@ fun CartScreen(onNavigateToHome: () -> Unit) {
             )
 
             LazyColumn(modifier = Modifier.weight(1f)) {
-                items(purosEnCarrito) { item ->
+                items(sharedViewModel.carrito) { item ->
                     Card(
-                        modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 4.dp),
                         colors = CardDefaults.cardColors(containerColor = Color.White),
                         elevation = CardDefaults.cardElevation(2.dp)
                     ) {
@@ -57,8 +56,7 @@ fun CartScreen(onNavigateToHome: () -> Unit) {
                             modifier = Modifier.padding(16.dp),
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
-                            Text(text = item.first)
-                            Text(text = "${item.second}€", fontWeight = FontWeight.Bold)
+                            Text(text = "${item.number} ${item.puro.name} de ${item.puro.price}€, en total ${item.puro.price*item.number} ")
                         }
                     }
                 }
@@ -93,13 +91,5 @@ fun CartScreen(onNavigateToHome: () -> Unit) {
                 Text("Volver al Inicio")
             }
         }
-    }
-}
-
-@Preview(showBackground = true, showSystemUi = true)
-@Composable
-fun CartPreview() {
-    MaterialTheme {
-        CartScreen(onNavigateToHome = {})
     }
 }

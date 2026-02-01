@@ -121,7 +121,15 @@ fun Details(
 
         // Buy button
         Button(
-            onClick = { navHostController.navigate("cart") },
+            onClick = {
+                val first: Item? = sharedViewModel.carrito.firstOrNull { it.puro.id == puro.id }
+                if (first == null) {
+                    sharedViewModel.carrito.add(Item(sharedViewModel.cantidad, puro))
+                } else {
+                    first.number = sharedViewModel.cantidad;
+                }
+                navHostController.navigate("cart")
+            },
             modifier = Modifier
                 .fillMaxWidth()
                 .height(52.dp)
