@@ -19,7 +19,6 @@ fun NavigationComponent() {
         composable("welcome") { WelcomeScreen(navController) }
         composable("legal") { LegalInfoScreen {
             navController.popBackStack()
-        }
-        }
+        } }
     }
 }
