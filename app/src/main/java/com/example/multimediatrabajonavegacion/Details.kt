@@ -1,6 +1,7 @@
 package com.example.multimediatrabajonavegacion
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -11,10 +12,6 @@ import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -22,7 +19,10 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 
 @Composable
-fun Details(navHostController: NavHostController, sharedViewModel: SharedViewModel) {
+fun Details(
+    navHostController: NavHostController,
+    sharedViewModel: SharedViewModel
+) {
     val puro = sharedViewModel.selectedPuro!!
 
     Column(
@@ -30,30 +30,73 @@ fun Details(navHostController: NavHostController, sharedViewModel: SharedViewMod
             .systemBarsPadding()
             .padding(16.dp)
     ) {
-        Text("Nombre: ${puro.name}")
-        Text("Id: ${puro.id}")
-        Text("Precio: ${puro.price}")
 
-        Image(
-            painter = painterResource(id = puro.icon),
-            contentDescription = puro.name,
-            modifier = Modifier.padding(vertical = 16.dp)
-        )
+        // Product card
+        androidx.compose.material3.Card(
+            modifier = Modifier.fillMaxWidth(),
+            shape = androidx.compose.material3.MaterialTheme.shapes.large,
+            elevation = androidx.compose.material3.CardDefaults.cardElevation(6.dp)
+        ) {
+            Column(
+                modifier = Modifier.padding(16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+
+                Text(
+                    text = puro.name,
+                    style = androidx.compose.material3.MaterialTheme.typography.headlineSmall
+                )
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                Image(
+                    painter = painterResource(id = puro.icon),
+                    contentDescription = puro.name,
+                    modifier = Modifier
+                        .height(180.dp)
+                        .padding(8.dp)
+                )
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                Text(
+                    text = "Price: ${puro.price} €",
+                    style = androidx.compose.material3.MaterialTheme.typography.titleMedium
+                )
+
+                Text(
+                    text = "Product ID: ${puro.id}",
+                    style = androidx.compose.material3.MaterialTheme.typography.bodySmall
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.height(24.dp))
 
         // Quantity selector
+        Text(
+            text = "Quantity",
+            style = androidx.compose.material3.MaterialTheme.typography.titleMedium
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
+
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.padding(vertical = 8.dp)
+            horizontalArrangement = Arrangement.SpaceBetween,
+            modifier = Modifier.fillMaxWidth()
         ) {
             Button(
-                onClick = { if (sharedViewModel.cantidad > 1) sharedViewModel.cantidad-- }
+                onClick = {
+                    if (sharedViewModel.cantidad > 1) sharedViewModel.cantidad--
+                }
             ) {
-                Text("-")
+                Text("−")
             }
 
             Text(
                 text = sharedViewModel.cantidad.toString(),
-                modifier = Modifier.padding(horizontal = 16.dp)
+                style = androidx.compose.material3.MaterialTheme.typography.headlineSmall
             )
 
             Button(
@@ -63,21 +106,29 @@ fun Details(navHostController: NavHostController, sharedViewModel: SharedViewMod
             }
         }
 
+        Spacer(modifier = Modifier.height(24.dp))
+
         // Buy button
         Button(
-            onClick = {
-                navHostController.navigate("cart")
-            },
-            modifier = Modifier.fillMaxWidth()
+            onClick = { navHostController.navigate("cart") },
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(52.dp)
         ) {
-            Text("Buy (${sharedViewModel.cantidad})")
+            Text(
+                text = "Buy (${sharedViewModel.cantidad})",
+                style = androidx.compose.material3.MaterialTheme.typography.titleMedium
+            )
         }
 
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(12.dp))
 
-        Button(
+        // Back button (secondary)
+        androidx.compose.material3.OutlinedButton(
             onClick = { navHostController.popBackStack() },
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(48.dp)
         ) {
             Text("Go back")
         }
