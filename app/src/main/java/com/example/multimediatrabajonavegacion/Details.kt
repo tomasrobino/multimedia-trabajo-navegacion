@@ -10,6 +10,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults.cardElevation
+import androidx.compose.material3.MaterialTheme.shapes
+import androidx.compose.material3.MaterialTheme.typography
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -38,10 +43,10 @@ fun Details(
     ) {
 
         // Product card
-        androidx.compose.material3.Card(
+        Card(
             modifier = Modifier.fillMaxWidth(),
-            shape = androidx.compose.material3.MaterialTheme.shapes.large,
-            elevation = androidx.compose.material3.CardDefaults.cardElevation(6.dp)
+            shape = shapes.large,
+            elevation = cardElevation(6.dp)
         ) {
             Column(
                 modifier = Modifier.padding(16.dp),
@@ -50,7 +55,7 @@ fun Details(
 
                 Text(
                     text = puro.name,
-                    style = androidx.compose.material3.MaterialTheme.typography.headlineSmall
+                    style = typography.headlineSmall
                 )
 
                 Spacer(modifier = Modifier.height(8.dp))
@@ -67,12 +72,12 @@ fun Details(
 
                 Text(
                     text = "Price: ${puro.price} €",
-                    style = androidx.compose.material3.MaterialTheme.typography.titleMedium
+                    style = typography.titleMedium
                 )
 
                 Text(
                     text = "Product ID: ${puro.id}",
-                    style = androidx.compose.material3.MaterialTheme.typography.bodySmall
+                    style = typography.bodySmall
                 )
             }
         }
@@ -82,7 +87,7 @@ fun Details(
         // Quantity selector
         Text(
             text = "Quantity",
-            style = androidx.compose.material3.MaterialTheme.typography.titleMedium
+            style = typography.titleMedium
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -102,7 +107,7 @@ fun Details(
 
             Text(
                 text = sharedViewModel.cantidad.toString(),
-                style = androidx.compose.material3.MaterialTheme.typography.headlineSmall
+                style = typography.headlineSmall
             )
 
             Button(
@@ -123,14 +128,14 @@ fun Details(
         ) {
             Text(
                 text = "Buy (${sharedViewModel.cantidad})",
-                style = androidx.compose.material3.MaterialTheme.typography.titleMedium
+                style = typography.titleMedium
             )
         }
 
         Spacer(modifier = Modifier.height(12.dp))
 
         // Back button (secondary)
-        androidx.compose.material3.OutlinedButton(
+        OutlinedButton(
             onClick = { navHostController.popBackStack() },
             modifier = Modifier
                 .fillMaxWidth()
