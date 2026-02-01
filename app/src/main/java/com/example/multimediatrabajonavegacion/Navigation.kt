@@ -20,5 +20,6 @@ fun NavigationComponent() {
         composable("legal") { LegalInfoScreen {
             navController.popBackStack()
         } }
+        composable("cart") { CartScreen {  } }
     }
 }
